@@ -1,5 +1,5 @@
 #include "main.h"
-/**
+/*
  * is_printable - Evaluates if a char is printable
  * @c: Char to be evaluated.
  *
@@ -49,6 +49,7 @@ int is_digit(char c)
 
 	return (0);
 }
+
 /**
  * convert_size_number - Casts a number to the specified size
  * @num: Number to be casted.
