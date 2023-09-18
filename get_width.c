@@ -34,4 +34,3 @@ int curr_i;
 
 	return (width);
 }
-
