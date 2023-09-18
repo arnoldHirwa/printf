@@ -1,5 +1,4 @@
 #include "main.h"
-#include <stdarg.h>
 
 /**
  * get_width - Calculates the width for printing
@@ -11,7 +10,7 @@
  */
 int get_width(const char *format, int *i, va_list list)
 {
-	int curr_i;
+int curr_i;
 	int width = 0;
 
 	for (curr_i = *i + 1; format[curr_i] != '\0'; curr_i++)
@@ -35,4 +34,3 @@ int get_width(const char *format, int *i, va_list list)
 
 	return (width);
 }
-
