@@ -1,0 +1,8 @@
+a.out
+get_flags.c
+get_precision.c
+get_size.c
+get_width.c
+handle_print.c
+utils.c
+write_handlers.c

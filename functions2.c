@@ -1,124 +1,104 @@
 #include "main.h"
-#include "utils.c"
 
 /**
- * print_unsigned - Print an unsigned integer
- * @list: A va_list containing the arguments
- * @flags: Flags to modify the output
- * @width: Minimum field width
- * @precision: Precision specifier
- * @size: Size specifier
- *
- * Return: The number of characters printed
- */
-int print_unsigned(va_list list, int flags, int width, int precision, int size)
+* print_int_hex - prints integers as lowercase hexadecimal from va_list
+* @list: list of integers to be printed
+* Return: number of characters printed
+*/
+int print_int_hex(va_list list)
 {
-    unsigned int u = get_unsigned_arg(list, size);
-    char *str;
-    int printed_chars = 0;
+	unsigned int num = va_arg(list, unsigned int);
+	char buffer[50];
 
-    str = _utoa(u, precision, 10);
-
-    if (flags & F_MINUS)
-        printed_chars += _printnstr(str, _strlen(str));
-
-    while (printed_chars < (width - _strlen(str)))
-    {
-        _putchar(' ');
-        printed_chars++;
-    }
-
-    if (!(flags & F_MINUS))
-        printed_chars += _printnstr(str, _strlen(str));
-
-    free(str);
-
-    return (printed_chars);
+	_itoa_hex(num, buffer, 0);
+	return (_puts(buffer));
 }
 
 /**
- * print_octal - Print an octal number
- * @list: A va_list containing the arguments
- * @flags: Flags to modify the output
- * @width: Minimum field width
- * @precision: Precision specifier
- * @size: Size specifier
- *
- * Return: The number of characters printed
- */
-int print_octal(va_list list, int flags, int width, int precision, int size)
+* print_int_hex_upper - prints integers as uppercase hexadecimal from va_list
+* @list: list of integers to be printed
+* Return: number of characters printed
+*/
+int print_int_hex_upper(va_list list)
 {
-    unsigned int u = get_unsigned_arg(list, size);
-    char *str;
-    int printed_chars = 0;
+	unsigned int num = va_arg(list, unsigned int);
+	char buffer[50];
 
-    str = _utoa(u, precision, 8);
-
-    if (flags & F_HASH && str[0] != '0')
-    {
-        _putchar('0');
-        printed_chars++;
-    }
-
-    if (flags & F_MINUS)
-        printed_chars += _printnstr(str, _strlen(str));
-
-    while (printed_chars < (width - _strlen(str)))
-    {
-        _putchar(' ');
-        printed_chars++;
-    }
-
-    if (!(flags & F_MINUS))
-        printed_chars += _printnstr(str, _strlen(str));
-
-    free(str);
-
-    return (printed_chars);
+	_itoa_hex(num, buffer, 1);
+	return (_puts(buffer));
 }
 
 /**
- * print_hexadecimal - Print a hexadecimal number
- * @list: A va_list containing the arguments
- * @flags: Flags to modify the output
- * @width: Minimum field width
- * @precision: Precision specifier
- * @size: Size specifier
- *
- * Return: The number of characters printed
- */
-int print_hexadecimal(va_list list, int flags, int width, int precision, int size)
+* _itoa_hex - Converts an unsigned integer to a hexadecimal string
+* @n: The unsigned integer
+* @s: Pointer to the destination character array
+* @is_uppercase: Flag to indicate uppercase (1) or lowercase (0) hex
+*/
+
+void _itoa_hex(unsigned int n, char *s, int is_uppercase)
 {
-    unsigned int u = get_unsigned_arg(list, size);
-    char *str;
-    int printed_chars = 0;
-    char prefix = '\0';
+	int i = 0;
 
-    str = _utoa(u, precision, 16);
+	if (n == 0)
+	{
+		s[i++] = '0';
+		s[i] = '\0';
+		return;
+	}
 
-    if (flags & F_HASH && u != 0)
-    {
-        prefix = (flags & F_UPPERCASE) ? 'X' : 'x';
-        _putchar('0');
-        printed_chars++;
+	while (n > 0)
+	{
+		int digit = n % 16;
 
-        _putchar(prefix);
-        printed_chars++;
-    }
+		s[i++] = (digit < 10) ?
+		digit + '0' :
+		(is_uppercase ? digit - 10 + 'A' : digit - 10 + 'a');
 
-    if (flags & F_MINUS)
-        printed_chars += _printnstr(str, _strlen(str));
+		n /= 16;
+	}
 
-    while (printed_chars < (width - _strlen(str)))
-    {
-        _putchar(' ');
-        printed_chars++;
-    }
+	s[i] = '\0';
+	rev_string(s);
+}
 
-    if (!(flags & F_MINUS))
-        printed_chars += _printnstr(str, _strlen(str));
+/**
+* print_octal - prints unsigned octal integers from va_list
+* @list: list of unsigned octal integers to be printed
+* Return: number of characters printed
+*/
+int print_octal(va_list list)
+{
+	unsigned int num = va_arg(list, unsigned int);
+	char buffer[50];
 
-    free(str);
+	_itoa_octal(num, buffer);
+	return (_puts(buffer));
+}
 
-    return (printed_chars);
+/**
+* _itoa_octal - Converts an unsigned integer to an octal string
+* @n: The unsigned integer
+* @s: Pointer to the destination character array
+*/
+void _itoa_octal(unsigned int n, char *s)
+{
+	int i = 0;
+
+	if (n == 0)
+	{
+		s[i++] = '0';
+		s[i] = '\0';
+		return;
+	}
+
+	while (n > 0)
+	{
+		int digit = n % 8;
+
+		s[i++] = digit + '0';
+		n /= 8;
+	}
+
+	s[i] = '\0';
+	rev_string(s);
 }

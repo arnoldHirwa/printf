@@ -1,138 +1,87 @@
 #include "main.h"
-#include "utils.c"
 
 /**
- * print_char - Print a character
- * @list: A va_list containing the arguments
- * @flags: Flags to modify the output
- * @width: Minimum field width
- * @precision: Precision specifier
- * @size: Size specifier (not used)
- *
- * Return: The number of characters printed
+ * rev_string - reverses string
+ * @s: string
  */
-int print_char(va_list list, int flags, int width, int precision, int size)
+
+void rev_string(char s[])
 {
-    char c = va_arg(list, int);
-    int printed_chars = 0;
+	unsigned int i = 0, len = 0;
+	char temp;
 
-    (void)precision;
-    (void)size;
+	len = _strlen(s);
 
-    if (flags & F_MINUS)
-        _putchar(c);
-
-    while (printed_chars < (width - 1))
-    {
-        _putchar(' ');
-        printed_chars++;
-    }
-
-    if (!(flags & F_MINUS))
-        _putchar(c);
-
-    return (printed_chars + 1);
+	for (; i < len / 2; i++)
+	{
+		temp = s[i];
+		s[i] = s[len - i - 1];
+		s[len - i - 1] = temp;
+	}
 }
 
 /**
- * print_string - Print a string
- * @list: A va_list containing the arguments
- * @flags: Flags to modify the output
- * @width: Minimum field width
- * @precision: Precision specifier
- *
- * Return: The number of characters printed
+ * _puts - prints string
+ * @str: string
+ * Return: number of characters printed
  */
-int print_string(va_list list, int flags, int width, int precision)
+int _puts(char *str)
 {
-    char *str = va_arg(list, char *);
-    int printed_chars = 0;
+	int i = 0;
 
-    if (str == NULL)
-        str = "(null)";
+	for (; str[i]; i++)
+		_putchar(str[i]);
 
-    if (precision == -1)
-        precision = _strlen(str);
-
-    if (flags & F_MINUS)
-        printed_chars += _printnstr(str, precision);
-
-    while (printed_chars < (width - _strlen(str)))
-    {
-        _putchar(' ');
-        printed_chars++;
-    }
-
-    if (!(flags & F_MINUS))
-        printed_chars += _printnstr(str, precision);
-
-    return (printed_chars);
+	return (i);
 }
 
 /**
- * print_percent - Print a percent symbol
- * @list: A va_list containing the arguments
- * @flags: Flags to modify the output
- *
- * Return: The number of characters printed
+ * _itoa - Converts long int to a string
+ *  @n: The long int
+ *  @s: array to store the string in after conversion
  */
-int print_percent(va_list list, int flags)
-{
-    (void)list;
-    (void)flags;
 
-    _putchar('%');
-    return (1);
+void _itoa(long n, char s[])
+{
+	long sign = n;
+	unsigned int i = 0;
+
+	if (sign < 0)
+		n = -n;
+	do {
+		s[i++] = n % 10 + '0';
+	} while ((n /= 10) > 0);
+	if (sign < 0)
+		s[i++] = '-';
+	s[i] = '\0';
+	rev_string(s);
 }
 
 /**
- * print_int - Print an integer
- * @list: A va_list containing the arguments
- * @flags: Flags to modify the output
- * @width: Minimum field width
- * @precision: Precision specifier
- * @size: Size specifier (not used)
- *
- * Return: The number of characters printed
- */
-int print_int(va_list list, int flags, int width, int precision, int size)
+* print_percent - prints percent sign
+* @list: list of args
+* Return: number of characters printed
+*/
+
+int print_percent(va_list list)
 {
-    int n = va_arg(list, int);
-    char *str;
-    int printed_chars = 0;
+	(void)(list);
+	_putchar('%');
+	return (1);
+}
 
-    (void)size;
+/**
+ * _strlen - length of string
+ * @s: string
+ * Return: the length the string
+ */
 
-    if (n < 0)
-    {
-        n = -n;
-        flags |= F_NEGATIVE;
-    }
+unsigned int _strlen(char *s)
+{
+	unsigned int len = 0;
 
-    str = _utoa(n, precision, 10);
+	while (s[len])
+		len++;
 
-    if (flags & F_NEGATIVE)
-        str = _strconcat("-", str);
-
-    if (flags & F_PLUS)
-        str = _strconcat("+", str);
-
-    if (flags & F_SPACE)
-        str = _strconcat(" ", str);
-
-    if (flags & F_MINUS)
-        printed_chars += _printnstr(str, _strlen(str));
-
-    while (printed_chars < (width - _strlen(str)))
-    {
-        _putchar(' ');
-        printed_chars++;
-    }
-
-    if (!(flags & F_MINUS))
-        printed_chars += _printnstr(str, _strlen(str));
-
-    free(str);
-
-    return (printed_chars);
+	return (len);
 }
