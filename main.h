@@ -41,7 +41,7 @@ typedef struct format
 int _printf(const char *format, ...);
 int _putchar(char c);
 int handle_print(const char *format, va_list args);
-int handle_specifier(char c, va_list args, int flags, int width, int precision, int size);
+int handle_specifier(char specifier, va_list args, int flags, int width, int precision, int size)
 int get_flags(const char *format, int *index);
 int get_width(const char *format, int *index, va_list args);
 int get_precision(const char *format, int *index, va_list args);
