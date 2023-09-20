@@ -39,6 +39,8 @@ int print_int_hex_upper(va_list list);
 int print_int_hex(va_list list);
 void _itoa(long n, char s[]);
 int print_pointer(va_list list);
+void number_to_binary(unsigned int n, char *s);
+int print_binary(va_list list);
 
 int _putchar(char c);
 int _puts(char *str);
