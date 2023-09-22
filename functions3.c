@@ -68,7 +68,7 @@ void number_to_binary(unsigned int n, char *s)
 */
 int print_nonprintable(va_list list)
 {
-	unsigned int i = 0;
+	unsigned int i = 0, count = 0;
 	unsigned int m;
 	char buffer[50];
 
@@ -83,23 +83,22 @@ int print_nonprintable(va_list list)
 		m = str[i];
 		if ((m < 32 && m != '\n') || m >= 127)
 		{
-			_putchar('\\');
-			_putchar('x');
+			_puts("\\x");
+			count += 2;
 			_itoa_hex(m, buffer, 1);
-			_puts(buffer);
+			count += _puts(buffer);
 		}
 		else if (m == '\n') /* Handle newline character separately */
 		{
-			_putchar('\\');
-			_putchar('x');
-			_putchar('0');
-			_putchar('A');
+			_puts("\\x0A");
+			count += 3;
 		}
 		else
 		{
 			_putchar(str[i]);
+			count += 1;
 		}
 	}
 
-	return (i);
+	return (count);
 }
