@@ -41,6 +41,8 @@ int print_pointer(va_list list);
 void number_to_binary(unsigned int n, char *s);
 int print_binary(va_list list);
 int print_nonprintable(va_list list);
+int print_nonPrintable(va_list l);
+char *convertBase(unsigned long int num, int base, int lowercase);
 
 int _putchar(char c);
 int _puts(char *str);

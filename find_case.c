@@ -21,7 +21,7 @@ int (*find_case(const char *format))(va_list)
 		{"X", print_int_hex_upper},
 		{"p", print_pointer},
 		{"b", print_binary},
-		{"S", print_nonprintable},
+		{"S", print_nonPrintable},
 		{NULL, NULL}};
 
 	for (; format_types[i].specifier; i++)
