@@ -60,3 +60,46 @@ void number_to_binary(unsigned int n, char *s)
 	s[m + 1] = '\0';
 	rev_string(s);
 }
+
+/**
+* print_nonprintable - prints non printable characters from va_list
+* @list: list of args
+* Return: number of characters printed
+*/
+int print_nonprintable(va_list list)
+{
+	unsigned int i = 0;
+	unsigned int m;
+	char buffer[50];
+
+	char *str;
+
+	str = va_arg(list, char *);
+	if (!str)
+		str = "(null)";
+
+	for (; str[i]; i++)
+	{
+		m = str[i];
+		if ((m < 32 && m != '\n') || m >= 127)
+		{
+			_putchar('\\');
+			_putchar('x');
+			_itoa_hex(m, buffer, 1);
+			_puts(buffer);
+		}
+		else if (m == '\n') /* Handle newline character separately */
+		{
+			_putchar('\\');
+			_putchar('x');
+			_putchar('0');
+			_putchar('A');
+		}
+		else
+		{
+			_putchar(str[i]);
+		}
+	}
+
+	return (i);
+}
