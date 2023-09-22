@@ -26,11 +26,17 @@ int print_nonPrintable(va_list l)
 			count += 2;
 			res = convertBase(s[i], 16, 0);
 			if (!res[1])
-				count += _putchar('0');
+			{
+				_putchar('0');
+				count += 1;
+			}
 			count += _puts(res);
 		}
 		else
-			count += _putchar(s[i]);
+		{
+			_putchar(s[i]);
+			count += 1;
+		}
 	}
 	return (count);
 }
