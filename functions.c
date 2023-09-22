@@ -21,21 +21,6 @@ void rev_string(char s[])
 }
 
 /**
- * _puts - prints string
- * @str: string
- * Return: number of characters printed
- */
-int _puts(char *str)
-{
-	int i = 0;
-
-	for (; str[i]; i++)
-		_putchar(str[i]);
-
-	return (i);
-}
-
-/**
  * _itoa - Converts long int to a string
  *  @n: The long int
  *  @s: array to store the string in after conversion
