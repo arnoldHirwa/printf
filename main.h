@@ -1,50 +1,104 @@
 #ifndef MAIN_H
 #define MAIN_H
-
-#include <stdlib.h>
 #include <stdarg.h>
-#include <unistd.h>
 #include <stdio.h>
+#include <unistd.h>
+
+#define UNUSED(x) (void)(x)
+#define BUFFER_SIZE 1024
+
+
+#define SIZE_LONG 2
+#define SIZE_SHORT 1
 
 /**
- * struct format - associate conversion specifiers with corresponding functions
- * @specifier: type char pointer to identify which conversion specifier
- * @conversion_func: func pointer to a function that takes a va_list of args
+ * struct format - Struct op
+ *
+ * @format: The format
+ * @fn: The function associated
  */
-typedef struct format
+struct format
 {
-	char *specifier;
-	int (*conversion_func)(va_list);
-} specifier_handler;
+	char format;
+	int (*fn)(va_list, char[], int, int, int, int);
+};
+
+#define V_MINUS 1
+#define V_PLUS 2
+#define V_ZERO 4
+#define V_HASH 8
+#define V_SPACE 16
+
+
+/**
+ * typedef struct format specifier_handler - Struct op
+ *
+ * @format: The format
+ * @fm_t: The function associated
+ */
+typedef struct format specifier_handler;
+
 int _printf(const char *format, ...);
-int _printf_supporter(const char *format, va_list args);
+int find_case(const char *format, int *i,
+va_list list, char buffer[], int flags, int width, int precision, int size);
 
-int (*find_case(const char *format))(va_list);
 
-int print_char(va_list args);
-int print_str(va_list list);
-int print_percent(va_list list);
-int print_int(va_list list);
-int (*find_case(const char *format))(va_list);
-int print_unsigned(va_list list);
+int handle_char(char c, char buffer[],
+	int flags, int width, int precision, int size);
+int handle_number(int is_positive, int ind, char buffer[],
+	int flags, int width, int precision, int size);
+int handle_num(int ind, char bff[], int flags, int width, int precision,
+	int length, char padd, char extra_c);
+int handle_pointer(char buffer[], int ind, int length,
+	int width, int flags, char padd, char extra_c, int padd_start);
 
-unsigned int _strlen(char *s);
-void rev_string(char s[]);
-void _itoa_unsigne(unsigned int n, char *s);
-int print_octal(va_list list);
-void _itoa_octal(unsigned int n, char *s);
-void _itoa_hex(unsigned int n, char *s, int is_uppercase);
-int print_int_hex_upper(va_list list);
-int print_int_hex(va_list list);
-void _itoa(long n, char s[]);
-int print_pointer(va_list list);
-void number_to_binary(unsigned int n, char *s);
-int print_binary(va_list list);
-int print_nonprintable(va_list list);
-int print_nonPrintable(va_list l);
-char *convertBase(unsigned long int num, int base, int lowercase);
+int handle_unSign(int is_negative, int ind,
+char buffer[],
+	int flags, int width, int precision, int size);
+int print_it(char);
+int hexa_code(char, char[], int);
+int find_digit(char);
+long int convert_num(long int num, int size);
+long int convert_int(unsigned long int num, int size);
 
-int _putchar(char c);
-int _puts(char *str);
+int print_char(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+int print_str(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+int print_perc(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
 
-#endif
+int print_int(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+int print_binary(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+int print_unsigne(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+int print_octal(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+int print_hex(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+int print_hex_upper(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+
+int print_hexa(va_list types, char map_to[],
+char buffer[], int flags, char flag_ch, int width, int precision, int size);
+
+int print_nonPrintable(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+
+int print_pointer(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+
+int get_flags(const char *format, int *i);
+int find_width(const char *format, int *i, va_list list);
+int get_precision(const char *format, int *i, va_list list);
+int find_size(const char *format, int *i);
+
+int reverse(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+
+int print_rot13(va_list types, char buffer[],
+	int flags, int width, int precision, int size);
+
+#endif /* MAIN.H */

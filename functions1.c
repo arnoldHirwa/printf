@@ -1,92 +1,156 @@
 #include "main.h"
 
 /**
-* _itoa_unsigne - Converts an unsigned integer to a string
-* @n: The unsigned integer
-* @s: Pointer to the destination character array
-*/
-void _itoa_unsigne(unsigned int n, char *s)
+ * print_hex - Prints an unsigned number in hexadecimal notation
+ * @types: Lista of arguments
+ * @buffer: Buffer array to handle print
+ * @flags:  Calculates active flags
+ * @width: get width
+ * @precision: Precision specification
+ * @size: Size specifier
+ * Return: Number of chars printed
+ */
+int print_hex(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
 {
-	unsigned int i = 0;
+	return (print_hexa(types, "0123456789abcdef", buffer,
+		flags, 'x', width, precision, size));
+}
 
-	if (n == 0)
+/**
+ * print_hex_upper - Prints an unsigned number in upper hexadecimal notation
+ * @types: Lista of arguments
+ * @buffer: Buffer array to handle print
+ * @flags:  Calculates active flags
+ * @width: get width
+ * @precision: Precision specification
+ * @size: Size specifier
+ * Return: Number of chars printed
+ */
+int print_hex_upper(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
+{
+	return (print_hexa(types, "0123456789ABCDEF", buffer,
+		flags, 'X', width, precision, size));
+}
 
+/**
+ * print_hexa - Prints a hexadecimal number in lower or upper
+ * @types: Lista of arguments
+ * @map_to: Array of Vs to map the number to
+ * @buffer: Buffer array to handle print
+ * @flags:  Calculates active flags
+ * @flag_ch: Calculates active flags
+ * @width: get width
+ * @precision: Precision specification
+ * @size: Size specifier
+ * @size: Size specification
+ * Return: Number of chars printed
+ */
+int print_hexa(va_list types, char map_to[], char buffer[],
+	int flags, char flag_ch, int width, int precision, int size)
+{
+	int i = BUFFER_SIZE - 2;
+	unsigned long int num = va_arg(types, unsigned long int);
+	unsigned long int init_num = num;
+
+	UNUSED(width);
+
+	num = convert_int(num, size);
+
+	if (num == 0)
+		buffer[i--] = '0';
+
+	buffer[BUFFER_SIZE - 1] = '\0';
+
+	while (num > 0)
 	{
-		s[i++] = '0';
-		s[i] = '\0';
-		return;
+		buffer[i--] = map_to[num % 16];
+		num /= 16;
 	}
-	while (n > 0)
+
+	if (flags & V_HASH && init_num != 0)
 	{
-		int digit = n % 10;
-
-		s[i++] = digit + '0';
-		n /= 10;
+		buffer[i--] = flag_ch;
+		buffer[i--] = '0';
 	}
-	s[i] = '\0';
-	rev_string(s);
+
+	i++;
+
+	return (handle_unSign(0, i, buffer, flags, width, precision, size));
 }
 
 /**
-* print_int - prints integers from va_list
-* @list: list of integers to be printed
-* Return: number of characters printed
-*/
-int print_int(va_list list)
+ * print_unsigne - Prints an unsigned number
+ * @types: Lista of arguments
+ * @buffer: Buffer array to handle print
+ * @flags:  Calculates active flags
+ * @width: get width
+ * @precision: Precision specification
+ * @size: Size specifier
+ * Return: Number of chars printed
+ */
+int print_unsigne(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
 {
-	int num = va_arg(list, long);
+	int i = BUFFER_SIZE - 2;
+	unsigned long int num = va_arg(types, unsigned long int);
 
-	char buffer[50];
+	num = convert_int(num, size);
 
-	_itoa(num, buffer);
-	return (_puts(buffer));
+	if (num == 0)
+		buffer[i--] = '0';
+
+	buffer[BUFFER_SIZE - 1] = '\0';
+
+	while (num > 0)
+	{
+		buffer[i--] = (num % 10) + '0';
+		num /= 10;
+	}
+
+	i++;
+
+	return (handle_unSign(0, i, buffer, flags, width, precision, size));
 }
 
 /**
-* print_char - prints a character from va_list
-* @list: list of args
-* Return: number of characters printed
-*/
-
-int print_char(va_list list)
+ * print_octal - Prints an unsigned number in octal notation
+ * @types: Lista of arguments
+ * @buffer: Buffer array to handle print
+ * @flags:  Calculates active flags
+ * @width: get width
+ * @precision: Precision specification
+ * @size: Size specifier
+ * Return: Number of chars printed
+ */
+int print_octal(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
 {
-	_putchar(va_arg(list, int));
-	return (1);
-}
 
-/**
-* print_str - prints a string from va_list
-* @list: containins string to be printed
-* Return: number of characters printed
-*/
+	int i = BUFFER_SIZE - 2;
+	unsigned long int num = va_arg(types, unsigned long int);
+	unsigned long int init_num = num;
 
-int print_str(va_list list)
-{
-	int i = 0;
+	UNUSED(width);
 
-	char *str;
+	num = convert_int(num, size);
 
-	str = va_arg(list, char *);
-	if (!str)
-		str = "(null)";
+	if (num == 0)
+		buffer[i--] = '0';
 
-	for (; str[i]; i++)
-		_putchar(str[i]);
+	buffer[BUFFER_SIZE - 1] = '\0';
 
-	return (i);
-}
+	while (num > 0)
+	{
+		buffer[i--] = (num % 8) + '0';
+		num /= 8;
+	}
 
-/**
-* print_unsigned - prints unsigned integers from va_list
-* @list: list of unsigned integers to be printed
-* Return: number of characters printed
-*/
-int print_unsigned(va_list list)
-{
-	unsigned int num = va_arg(list, unsigned int);
+	if (flags & V_HASH && init_num != 0)
+		buffer[i--] = '0';
 
-	char buffer[50];
+	i++;
 
-	_itoa_unsigne(num, buffer);
-	return (_puts(buffer));
+	return (handle_unSign(0, i, buffer, flags, width, precision, size));
 }

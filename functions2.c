@@ -1,104 +1,185 @@
 #include "main.h"
 
 /**
-* print_int_hex - prints integers as lowercase hexadecimal from va_list
-* @list: list of integers to be printed
-* Return: number of characters printed
-*/
-int print_int_hex(va_list list)
-{
-	unsigned int num = va_arg(list, unsigned int);
-	char buffer[50];
+ * reverse - Prints reverse string.
+ * @types: Lista of arguments
+ * @buffer: Buffer array to handle print
+ * @flags:  Calculates active flags
+ * @width: get width
+ * @precision: Precision specification
+ * @size: Size specifier
+ * Return: Numbers of chars printed
+ */
 
-	_itoa_hex(num, buffer, 0);
-	return (_puts(buffer));
+int reverse(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
+{
+	char *str;
+	int i, count = 0;
+
+	UNUSED(buffer);
+	UNUSED(flags);
+	UNUSED(width);
+	UNUSED(size);
+
+	str = va_arg(types, char *);
+
+	if (str == NULL)
+	{
+		UNUSED(precision);
+
+		str = ")Null(";
+	}
+	for (i = 0; str[i]; i++)
+		;
+
+	for (i = i - 1; i >= 0; i--)
+	{
+		char z = str[i];
+
+		write(1, &z, 1);
+		count++;
+	}
+	return (count);
 }
 
 /**
-* print_int_hex_upper - prints integers as uppercase hexadecimal from va_list
-* @list: list of integers to be printed
-* Return: number of characters printed
-*/
-int print_int_hex_upper(va_list list)
+ * print_rot13 - Print a string in rot13.
+ * @types: Lista of arguments
+ * @buffer: Buffer array to handle print
+ * @flags:  Calculates active flags
+ * @width: get width
+ * @precision: Precision specification
+ * @size: Size specifier
+ * Return: Numbers of chars printed
+ */
+int print_rot13(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
 {
-	unsigned int num = va_arg(list, unsigned int);
-	char buffer[50];
+	char x;
+	char *str;
+	unsigned int i, j;
+	int count = 0;
+	char in[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	char out[] = "NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm";
 
-	_itoa_hex(num, buffer, 1);
-	return (_puts(buffer));
+	str = va_arg(types, char *);
+	UNUSED(buffer);
+	UNUSED(flags);
+	UNUSED(width);
+	UNUSED(precision);
+	UNUSED(size);
+
+	if (str == NULL)
+		str = "(AHYY)";
+	for (i = 0; str[i]; i++)
+	{
+		for (j = 0; in[j]; j++)
+		{
+			if (in[j] == str[i])
+			{
+				x = out[j];
+				write(1, &x, 1);
+				count++;
+				break;
+			}
+		}
+		if (!in[j])
+		{
+			x = str[i];
+			write(1, &x, 1);
+			count++;
+		}
+	}
+	return (count);
+}
+
+
+/**
+ * print_pointer - Prints the V of a pointer variable
+ * @types: Lista of arguments
+ * @buffer: Buffer array to handle print
+ * @flags:  Calculates active flags
+ * @width: get width
+ * @precision: Precision specification
+ * @size: Size specifier
+ * Return: Number of chars printed
+ */
+int print_pointer(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
+{
+	char extra_c = 0, padd = ' ';
+	int ind = BUFFER_SIZE - 2, length = 2, padd_start = 1;
+	unsigned long num_addrs;
+	char map_to[] = "0123456789abcdef";
+	void *addrs = va_arg(types, void *);
+
+	UNUSED(width);
+	UNUSED(size);
+
+	if (addrs == NULL)
+		return (write(1, "(nil)", 5));
+
+	buffer[BUFFER_SIZE - 1] = '\0';
+	UNUSED(precision);
+
+	num_addrs = (unsigned long)addrs;
+
+	while (num_addrs > 0)
+	{
+		buffer[ind--] = map_to[num_addrs % 16];
+		num_addrs /= 16;
+		length++;
+	}
+
+	if ((flags & V_ZERO) && !(flags & V_MINUS))
+		padd = '0';
+	if (flags & V_PLUS)
+		extra_c = '+', length++;
+	else if (flags & V_SPACE)
+		extra_c = ' ', length++;
+
+	ind++;
+
+	return (handle_pointer(buffer, ind, length,
+		width, flags, padd, extra_c, padd_start));
 }
 
 /**
-* _itoa_hex - Converts an unsigned integer to a hexadecimal string
-* @n: The unsigned integer
-* @s: Pointer to the destination character array
-* @is_uppercase: Flag to indicate uppercase (1) or lowercase (0) hex
-*/
-
-void _itoa_hex(unsigned int n, char *s, int is_uppercase)
+ * print_nonPrintable - Prints ascii codes in hexa of non printable chars
+ * @types: Lista of arguments
+ * @buffer: Buffer array to handle print
+ * @flags:  Calculates active flags
+ * @width: get width
+ * @precision: Precision specification
+ * @size: Size specifier
+ * Return: Number of chars printed
+ */
+int print_nonPrintable(va_list types, char buffer[],
+	int flags, int width, int precision, int size)
 {
-	int i = 0;
+	int i = 0, offset = 0;
+	char *str = va_arg(types, char *);
 
-	if (n == 0)
+	UNUSED(flags);
+	UNUSED(width);
+	UNUSED(precision);
+	UNUSED(size);
+
+	if (str == NULL)
+		return (write(1, "(null)", 6));
+
+	while (str[i] != '\0')
 	{
-		s[i++] = '0';
-		s[i] = '\0';
-		return;
+		if (print_it(str[i]))
+			buffer[i + offset] = str[i];
+		else
+			offset += hexa_code(str[i], buffer, i + offset);
+
+		i++;
 	}
 
-	while (n > 0)
-	{
-		int digit = n % 16;
+	buffer[i + offset] = '\0';
 
-		s[i++] = (digit < 10) ?
-		digit + '0' :
-		(is_uppercase ? digit - 10 + 'A' : digit - 10 + 'a');
-
-		n /= 16;
-	}
-
-	s[i] = '\0';
-	rev_string(s);
-}
-
-/**
-* print_octal - prints unsigned octal integers from va_list
-* @list: list of unsigned octal integers to be printed
-* Return: number of characters printed
-*/
-int print_octal(va_list list)
-{
-	unsigned int num = va_arg(list, unsigned int);
-	char buffer[50];
-
-	_itoa_octal(num, buffer);
-	return (_puts(buffer));
-}
-
-/**
-* _itoa_octal - Converts an unsigned integer to an octal string
-* @n: The unsigned integer
-* @s: Pointer to the destination character array
-*/
-void _itoa_octal(unsigned int n, char *s)
-{
-	int i = 0;
-
-	if (n == 0)
-	{
-		s[i++] = '0';
-		s[i] = '\0';
-		return;
-	}
-
-	while (n > 0)
-	{
-		int digit = n % 8;
-
-		s[i++] = digit + '0';
-		n /= 8;
-	}
-
-	s[i] = '\0';
-	rev_string(s);
+	return (write(1, buffer, i + offset));
 }

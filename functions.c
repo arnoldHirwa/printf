@@ -1,72 +1,86 @@
 #include "main.h"
 
 /**
- * rev_string - reverses string
- * @s: string
+ * print_it - EVuates if a char is printable
+ * @c: Char to be eVuated
+ *
+ * Return: 1 if c is printable, 0 otherwise
  */
-
-void rev_string(char s[])
+int print_it(char c)
 {
-	unsigned int i = 0, len = 0;
-	char temp;
+	if (c >= 32 && c < 127)
+		return (1);
 
-	len = _strlen(s);
-
-	for (; i < len / 2; i++)
-	{
-		temp = s[i];
-		s[i] = s[len - i - 1];
-		s[len - i - 1] = temp;
-	}
+	return (0);
 }
 
 /**
- * _itoa - Converts long int to a string
- *  @n: The long int
- *  @s: array to store the string in after conversion
+ * hexa_code - Append ascci in hexadecimal code to buffer
+ * @buffer: Array of chars.
+ * @i: Index at which to start appending.
+ * @ascii_code: ASSCI CODE.
+ * Return: Always 3
  */
-
-void _itoa(long n, char s[])
+int hexa_code(char ascii_code, char buffer[], int i)
 {
-	long sign = n;
-	unsigned int i = 0;
+	char map_to[] = "0123456789ABCDEF";
+	/* The hexa format code is always 2 digits long */
+	if (ascii_code < 0)
+		ascii_code *= -1;
 
-	if (sign < 0)
-		n = -n;
-	do {
-		s[i++] = n % 10 + '0';
-	} while ((n /= 10) > 0);
-	if (sign < 0)
-		s[i++] = '-';
-	s[i] = '\0';
-	rev_string(s);
+	buffer[i++] = '\\';
+	buffer[i++] = 'x';
+
+	buffer[i++] = map_to[ascii_code / 16];
+	buffer[i] = map_to[ascii_code % 16];
+
+	return (3);
 }
 
 /**
-* print_percent - prints percent sign
-* @list: list of args
-* Return: number of characters printed
-*/
-
-int print_percent(va_list list)
+ * find_digit - Verifies if a char is a digit
+ * @c: Char to be eVuated
+ *
+ * Return: 1 if c is a digit, 0 otherwise
+ */
+int find_digit(char c)
 {
-	(void)(list);
-	_putchar('%');
-	return (1);
+	if (c >= '0' && c <= '9')
+		return (1);
+
+	return (0);
 }
 
 /**
- * _strlen - length of string
- * @s: string
- * Return: the length the string
+ * convert_num - Casts a number to the specified size
+ * @num: Number to be casted
+ * @size: Number indicating the type to be casted
+ *
+ * Return: Casted V of num
  */
-
-unsigned int _strlen(char *s)
+long int convert_num(long int num, int size)
 {
-	unsigned int len = 0;
+	if (size == SIZE_LONG)
+		return (num);
+	else if (size == SIZE_SHORT)
+		return ((short)num);
 
-	while (s[len])
-		len++;
+	return ((int)num);
+}
 
-	return (len);
+/**
+ * convert_int - Casts a number to the specified size
+ * @num: Number to be casted
+ * @size: Number indicating the type to be casted
+ *
+ * Return: Casted V of num
+ */
+long int convert_int(unsigned long int num, int size)
+{
+	if (size == SIZE_LONG)
+		return (num);
+	else if (size == SIZE_SHORT)
+		return ((unsigned short)num);
+
+	return ((unsigned int)num);
 }

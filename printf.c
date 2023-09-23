@@ -1,76 +1,66 @@
 #include "main.h"
 
+void print_buffer(char buffer[], int *buff_ind);
+
 /**
-* _printf - prints a formatted string to stdout, similar to printf
-* @format: contains the format specification for the output
-*
-* This function performs formatted output to standard output,
-* It takes a format string and a variable number of arguments,
-* processes the format string and arguments,
-* and outputs the result to standard output.
-*
-* Return: the number of characters printed
-*/
+ * _printf - Printf function
+ * @format: format
+ * Return: Printed chars.
+ */
 int _printf(const char *format, ...)
 {
-	va_list args;
-	int len;
+	int i, printed = 0, printed_chars = 0;
+	int flags, width, precision, size, buff_ind = 0;
+	va_list list;
+	char buffer[BUFFER_SIZE];
 
 	if (format == NULL)
 		return (-1);
 
-	va_start(args, format);
-	len = _printf_supporter(format, args);
-	va_end(args);
+	va_start(list, format);
 
-	return (len);
+	for (i = 0; format && format[i] != '\0'; i++)
+	{
+		if (format[i] != '%')
+		{
+			buffer[buff_ind++] = format[i];
+			if (buff_ind == BUFFER_SIZE)
+				print_buffer(buffer, &buff_ind);
+			/* write(1, &format[i], 1);*/
+			printed_chars++;
+		}
+		else
+		{
+			print_buffer(buffer, &buff_ind);
+			flags = get_flags(format, &i);
+			width = find_width(format, &i, list);
+			precision = get_precision(format, &i, list);
+			size = find_size(format, &i);
+			++i;
+			printed = find_case(format, &i, list, buffer,
+				flags, width, precision, size);
+			if (printed == -1)
+				return (-1);
+			printed_chars += printed;
+		}
+	}
+
+	print_buffer(buffer, &buff_ind);
+
+	va_end(list);
+
+	return (printed_chars);
 }
 
 /**
-* _printf_supporter - Perform formatted output to standard output
-* @format: format string specifying how to format the output
-* @args: varg list containing values to be formatted
-*
-* Return: number of characters written to standard output
-*/
-int _printf_supporter(const char *format, va_list args)
+ * print_buffer - Prints the contents of the buffer if it exist
+ * @buffer: Array of chars
+ * @buff_ind: Index at which to add next char, represents the length
+ */
+void print_buffer(char buffer[], int *buff_ind)
 {
-	int (*func_ptr)(va_list);
-	int i, len;
+	if (*buff_ind > 0)
+		write(1, &buffer[0], *buff_ind);
 
-	i = 0;
-	len = 0;
-	for (; format && format[i]; i++)
-	{
-		if (format[i] == '%')
-		{
-			if (format[i + 1] == '\0')
-				return (-1);
-
-			while (format[i + 1] == ' ')
-			{
-				if (format[i + 2] == '\0')
-					return (-1);
-				i++;
-			}
-
-			func_ptr = find_case(&format[++i]); /* for invalid formats */
-
-			if (func_ptr != NULL)
-			{
-				if (format[i] == 'x')
-					len += func_ptr(args);
-				else if (format[i] == 'X')
-					len += func_ptr(args);
-				else
-					len += func_ptr(args);
-			}
-			else
-				len += _putchar('%') + _putchar(format[i]);
-		}
-		else
-			len += _putchar(format[i]);
-	}
-
-	return (len);
+	*buff_ind = 0;
 }
